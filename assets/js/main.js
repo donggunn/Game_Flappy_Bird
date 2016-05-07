@@ -6,6 +6,9 @@ var main_state = {
 
     preload: function() { 
 		// Function called first to load all the assets
+        this.game.stage.backgroundColor ='blue';
+        this.game.load.image('bird','assets/images/bird.png');
+        this.game.load.image('pipe','assets/images/pipe.png');
     },
 
     create: function() { 
