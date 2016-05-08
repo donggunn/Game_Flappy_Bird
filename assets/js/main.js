@@ -6,13 +6,17 @@ var main_state = {
 		// That's where we load the images and sounds
 
 
-        // Set backgoud
-        this.game.stage.backgroundColor ='blue';
+        // Set background color
+        this.game.stage.backgroundColor = 'blue';
+
 		/* Load the bird sprite */
 		game.load.image('bird', 'assets/images/bird.png');
 
 		// Load the pipe sprite
 		game.load.image('pipe', 'assets/images/pipe.png');
+
+        // Load the sounds sprite
+        this.game.load.audio('jump','assets/jump.wav');
     },
 
     create: function() { 
@@ -49,6 +53,12 @@ var main_state = {
 		// Add score and handling collisions
 		this.score = 0;
 		this.labelScore = game.add.text(20, 20, "0",{font: "30px Arial", fill: "#ffffff"});   
+
+        // Move the anchor to the left and downward
+        this.bird.anchor.setTo(-0.2, -0.5);
+
+        // Add sound in the game
+        this.jumpSound = game.add.audio('jump');
     },
     
     update: function() {
@@ -61,12 +71,37 @@ var main_state = {
 		}
 		// Call the 'restartGame' function each time the bird collides width a pipe from the pipes group.
 		game.physics.arcade.overlap(this.bird, this.pipes, this.restartGame, null, this);
+
+        // And animotion
+        if(this.bird.angle < 20){
+            this.bird.angle += 1;
+        }
+
+        // Add dead animotion
+        game.physics.arcade.overlap(this.bird, this.pipes, this.hitPipe, null, this);
     },
 
     // Make the bird jump
     jump: function() {
     	// Add a vertical velocity to the bird
     	this.bird.body.velocity.y = -350;
+
+        // Create an animation on the bird
+        var animation = game.add.tween(this.bird);
+
+        //Change the angle of the bord to -20° in 100 milliseconds
+        animation.to({'angle': -20}, 100);
+
+        // And start the animotion
+        animation.start();
+
+        // If the bird has already hit a pipe, do nothing
+        // It means the bird is already falling off the screen
+        if(this.bird.alive = false){
+            return;
+        }
+        // Play the sound effect.
+        this.jumpSound.play();
     },
 
     // Restart the game
@@ -108,6 +143,18 @@ var main_state = {
     	// Increase the score by 1 each time new pipes are created
     	this.score += 1;
     	this.labelScore.text = this.score;
+    },
+    hitPipe: function() {
+        // set the alive property of the bird to fasle
+        this.bird.alive = false;
+
+        // Prevent new pipes form appearing
+        game.time.events.remove(this.timer);
+
+        // Go through all the pipes, and stop their movement
+        this.pipes.forEach(function(p){
+            p.body.velocity.x = 0;
+        }, this);
     }
 };
 
