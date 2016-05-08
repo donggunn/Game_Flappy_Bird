@@ -5,6 +5,9 @@ var main_state = {
 		// Function called first to load all the assets
 		// That's where we load the images and sounds
 
+
+        // Set backgoud
+        this.game.stage.backgroundColor ='blue';
 		/* Load the bird sprite */
 		game.load.image('bird', 'assets/images/bird.png');
 
